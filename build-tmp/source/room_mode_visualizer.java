@@ -32,6 +32,8 @@ float freqSelected;
 int visualWidth;
 int visualHeight;
 
+int fontSize;
+
 final int _WIDTH = 800;
 final int _HEIGHT = 800;
 
@@ -45,6 +47,8 @@ public void setup() {
 	freqSelected = 3000;
 	freqAmplitude = 0;
 
+	fontSize = 125;
+
 	in = minim.getLineIn(Minim.MONO, 4096, sampleRate); 
 	fft = new FFT(in.left.size(), sampleRate);
 
@@ -54,6 +58,7 @@ public void draw() {
 	background(0);
 
 	selectFreq();
+	writeFreq();
 	listen();
 	visualize();
 
@@ -66,6 +71,13 @@ public void draw() {
 
 public void selectFreq() {
 	freqSelected = map(mouseY, _HEIGHT, 0, 20, 20000);
+}
+
+public void writeFreq() {
+	textSize(fontSize);
+	textAlign(CENTER);
+	fill(235);
+	text(freqSelected, _WIDTH/2, _HEIGHT/2);
 }
 
 public float listen() {
