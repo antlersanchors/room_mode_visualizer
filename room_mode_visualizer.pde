@@ -145,27 +145,27 @@ void calcFreq() {
 	int numFreq = freqList.size();
 	float freqTotal = 0;
 
-	for (int i = 0; i < numFreq-1; i++) {
+	for (int i = 0; i < numFreq; i++) {
 		freqTotal = freqTotal + freqList.get(i);
 	}
 
 	println("freqTotal: "+freqTotal);
 	println("numFreq: "+numFreq);
 
-	freqAmplitude = freqTotal / numFreq+1;	
+	freqAmplitude = freqTotal / numFreq;	
 	freqList.clear();
 }
 
 void visualize() {
 	// don't like this mapping, it goes all the way around to red at both ends
-	visualColour = int(map(freqSelected, 20, 20000, 325, 0));
-	visualAlpha = int(map(freqAmplitude, minAmp, minAmp, 70, 100));
-	fill(visualColour, visualSaturation, visualBrightness, visualAlpha);
+	visualColour = int(map(freqAmplitude, minAmp, maxAmp, 325, 0));
+	visualAlpha = int(map(freqAmplitude, minAmp, maxAmp, 70, 100));
+	background(visualColour, visualSaturation, visualBrightness, visualAlpha);
 
-	visualWidth = int(map(freqAmplitude, minAmp, maxAmp, 5, _WIDTH));
-	visualHeight = visualWidth;
+	// visualWidth = int(map(freqAmplitude, minAmp, maxAmp, 5, _WIDTH));
+	// visualHeight = visualWidth;
 
-	ellipse(_WIDTH/2, _HEIGHT/2, visualWidth, visualHeight);
+	// ellipse(_WIDTH/2, _HEIGHT/2, visualWidth, visualHeight);
 }
 
 void playFreq() {
