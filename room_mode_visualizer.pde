@@ -5,6 +5,7 @@ Minim minim;
 AudioInput in;
 FFT fft;
 
+int bufferSize;
 int sampleRate;
 
 float freqAmplitude;
@@ -13,6 +14,9 @@ float freqSelected;
 int numBands;
 int bandSelected;
 float centerFreq;
+
+int minAmp;
+int maxAmp;
 
 int visualWidth;
 int visualHeight;
@@ -28,19 +32,14 @@ final int _HEIGHT = 800;
 
 void setup() {
 	size(_WIDTH, _HEIGHT);
-
 	colorMode(HSB, 360, 100, 100, 100);
+	fontSize = 125;
 
-	minim = new Minim(this);
-	sampleRate = 44100;
+	// *** TUNE AMPLITUDE RANGE HERE ***
+	minAmp = 0.01;
+	maxAmp = 35;
 
-	// what frequency are we sampling?
-	freqSelected = 3000;
-	freqAmplitude = 0;
-
-	numBands = 0;
-	bandSelected = 1;
-
+	// *** TUNE VISUALIZATION HERE ***
 	visualWidth = 50;
 	visualHeight = 50;
 	visualColour = 360;
@@ -48,9 +47,17 @@ void setup() {
 	visualBrightness = 80;
 	visualAlpha = 100;
 
-	fontSize = 125;
+	freqSelected = 3000; // what frequency are we sampling?
+	freqAmplitude = 0;
 
-	in = minim.getLineIn(Minim.MONO, 256, sampleRate); 
+	numBands = 0;
+	bandSelected = 1;
+
+	minim = new Minim(this);
+	bufferSize = 256; // the number of freq bands will be this/2
+	sampleRate = 44100;
+
+	in = minim.getLineIn(Minim.MONO, bufferSize, sampleRate); 
 	fft = new FFT(in.left.size(), sampleRate);
 
 }
@@ -70,11 +77,6 @@ void draw() {
 	// eat cake
 }
 
-void selectFreq() {
-	// change the frequency of interest based on mouseY
-	freqSelected = map(mouseY, _HEIGHT, 0, 20, 20000);
-}
-
 void selectBand() {
 	// change the frequency BAND of interest based on mouseY
 	numBands = fft.specSize();
@@ -87,16 +89,6 @@ void selectBand() {
 	freqSelected = centerFreq;
 
 	println("BandWidth: "+fft.getBandWidth());
-}
-
-void listenFreq() {
-	fft.forward(in.left);
-
-	freqAmplitude = fft.getFreq(freqSelected);
-	
-	println("freqSelected: "+freqSelected);
-	println("freqAmplitude: "+freqAmplitude);
-
 }
 
 void listenBand() {
@@ -114,7 +106,7 @@ void visualize() {
 	visualColour = int(map(freqSelected, 20, 20000, 0, 325));
 	fill(visualColour, visualSaturation, visualBrightness, visualAlpha);
 
-	visualWidth = int(map(freqAmplitude, 0.001, 45.0, 5, _WIDTH));
+	visualWidth = int(map(freqAmplitude, minAmp, maxAmp, 5, _WIDTH));
 	visualHeight = visualWidth;
 	ellipse(_WIDTH/2, _HEIGHT/2, visualWidth, visualHeight);
 }
@@ -125,4 +117,20 @@ void writeFreq() {
 	textAlign(CENTER);
 	fill(235);
 	text(freqSelected, _WIDTH/2, _HEIGHT/2);
+}
+
+// using bands instead
+void selectFreq() {
+	// change the frequency of interest based on mouseY
+	freqSelected = map(mouseY, _HEIGHT, 0, 20, 20000);
+}
+
+void listenFreq() {
+	fft.forward(in.left);
+
+	freqAmplitude = fft.getFreq(freqSelected);
+	
+	println("freqSelected: "+freqSelected);
+	println("freqAmplitude: "+freqAmplitude);
+
 }
