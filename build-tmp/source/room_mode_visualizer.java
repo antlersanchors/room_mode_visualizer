@@ -64,8 +64,6 @@ boolean mute;
 int fontSize;
 boolean showFreq;
 
-// final int _WIDTH = 1440;
-// final int _HEIGHT = 900;
 final int _WIDTH = 1440;
 final int _HEIGHT = 900;
 
@@ -125,12 +123,12 @@ public void draw() {
 	selectBand();
 	listenBand();
 
-	if ( elapsedTime >= 1000 && elapsedTime <= 2000 ) {
+	if ( elapsedTime >= 1000 && elapsedTime <= 3000 ) {
 		ping = true;
 		visualize();
 		playFreq();
 	
-	} else if (elapsedTime > 2000 ) {
+	} else if (elapsedTime > 3000 ) {
 		ping = false;
 		prevTime = millis();
 	}
@@ -166,26 +164,26 @@ public void calcFreq() {
 	int numFreq = freqList.size();
 	float freqTotal = 0;
 
-	for (int i = 0; i < numFreq-1; i++) {
+	for (int i = 0; i <= numFreq; i++) {
 		freqTotal = freqTotal + freqList.get(i);
 	}
 
 	println("freqTotal: "+freqTotal);
 	println("numFreq: "+numFreq);
 
-	freqAmplitude = freqTotal / numFreq+1;	
+	freqAmplitude = freqTotal / numFreq;	
 	freqList.clear();
 }
 
 public void visualize() {
 	// don't like this mapping, it goes all the way around to red at both ends
-	visualColour = PApplet.parseInt(map(freqSelected, 20, 20000, 325, 0));
-	visualAlpha = PApplet.parseInt(map(freqAmplitude, minAmp, minAmp, 70, 100));
+	visualColour = PApplet.parseInt(map(freqAmplitude, minAmp, maxAmp, 325, 0));
+	visualAlpha = PApplet.parseInt(map(freqAmplitude, minAmp, maxAmp, 70, 100));
 	fill(0);
-	strokeWeight(10);
+	strokeWeight(20);
 	stroke(visualColour, visualSaturation, visualBrightness, visualAlpha);
 
-	visualWidth = PApplet.parseInt(map(freqAmplitude, minAmp, maxAmp, 5, _WIDTH));
+	visualWidth = PApplet.parseInt(map(freqAmplitude, minAmp, maxAmp, 5, _HEIGHT*.9f));
 	visualHeight = visualWidth;
 
 	ellipse(_WIDTH/2, _HEIGHT/2, visualWidth, visualHeight);
