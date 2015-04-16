@@ -71,7 +71,7 @@ public void setup() {
 	visualHeight = 50;
 	visualColour = 360;
 	visualSaturation = 80;
-	visualBrightness = 80;
+	visualBrightness = 40;
 	visualAlpha = 100;
 
 	freqSelected = 3000; // what frequency are we sampling?
@@ -132,6 +132,7 @@ public void listenBand() {
 public void visualize() {
 	// don't like this mapping, it goes all the way around to red at both ends
 	visualColour = PApplet.parseInt(map(freqSelected, 20, 20000, 0, 325));
+	visualAlpha = PApplet.parseInt(map(freqAmplitude, minAmp, minAmp, 0, 100));
 	fill(visualColour, visualSaturation, visualBrightness, visualAlpha);
 
 	visualWidth = PApplet.parseInt(map(freqAmplitude, minAmp, maxAmp, 5, _WIDTH));
