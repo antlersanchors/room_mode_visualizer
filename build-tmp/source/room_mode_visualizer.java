@@ -34,9 +34,15 @@ int sampleRate;
 float freqAmplitude;
 float freqSelected;
 
+FloatList freqList;
+int maxNumFreq;
+
 int numBands;
 int bandSelected;
 float centerFreq;
+
+float rawFreq;
+float rawAmp;
 
 float minAmp;
 float maxAmp;
@@ -53,8 +59,10 @@ boolean mute;
 int fontSize;
 boolean showFreq;
 
-final int _WIDTH = 1440;
-final int _HEIGHT = 900;
+// final int _WIDTH = 1440;
+// final int _HEIGHT = 900;
+final int _WIDTH = 800;
+final int _HEIGHT = 800;
 
 public void setup() {
 	size(_WIDTH, _HEIGHT);
@@ -93,6 +101,9 @@ public void setup() {
 	wave = new Oscil(freqSelected, 0.5f, Waves.SINE);
 	wave.patch(out);
 
+	freqList = new FloatList();
+	maxNumFreq = 50;
+
 }
 
 public void draw() {
@@ -122,18 +133,36 @@ public void selectBand() {
 public void listenBand() {
 	fft.forward(in.left);
 
-	freqAmplitude = fft.getBand(bandSelected); // get amplitude of selected band
+	rawAmp = fft.getBand(bandSelected); // get amplitude of selected band
+
+	freqList.append(rawAmp);
+
+	if (freqList.size() > maxNumFreq) {
+		calcFreq();
+	}
 	
 	println("bandSelected: "+bandSelected);
 	println("freqAmplitude: "+freqAmplitude);
 
 }
 
+public void calcFreq() {
+	int numFreq = freqList.size();
+	float freqTotal = 0;
+
+	for (int i = 0; i < numFreq-1; i++) {
+		freqTotal = freqTotal + freqList.get(i);
+	}
+
+	freqAmplitude = freqTotal / numFreq;	
+	freqList.clear();
+}
+
 public void visualize() {
 	// don't like this mapping, it goes all the way around to red at both ends
 	visualColour = PApplet.parseInt(map(freqSelected, 20, 20000, 0, 325));
-	visualAlpha = PApplet.parseInt(map(freqAmplitude, minAmp, minAmp, 0, 100));
-	fill(visualColour, visualSaturation, visualBrightness, visualAlpha);
+	visualAlpha = PApplet.parseInt(map(freqAmplitude, minAmp, minAmp, 70, 100));
+	fill(250, visualSaturation, visualBrightness, visualAlpha);
 
 	visualWidth = PApplet.parseInt(map(freqAmplitude, minAmp, maxAmp, 5, _WIDTH));
 	visualHeight = visualWidth;
