@@ -53,8 +53,8 @@ boolean mute;
 int fontSize;
 boolean showFreq;
 
-final int _WIDTH = 800;
-final int _HEIGHT = 800;
+final int _WIDTH = 1440;
+final int _HEIGHT = 900;
 
 public void setup() {
 	size(_WIDTH, _HEIGHT);
