@@ -28,7 +28,7 @@ int sampleRate;
 
 int loudnessLevel;
 float freqAmplitude;
-int freqSelected;
+float freqSelected;
 
 final int _WIDTH = 800;
 final int _HEIGHT = 800;
@@ -44,20 +44,19 @@ public void setup() {
 	freqAmplitude = 0;
 	freqSelected = 3000;
 
-}
-
-public void draw() {
-
-	background(0);
-
 	in = minim.getLineIn(Minim.MONO, 4096, sampleRate); 
 	fft = new FFT(in.left.size(), sampleRate);
 
-	fft.forward(in.left);
+}
+
+public void draw() {
+	background(0);
+
+	listen();
 	println("fft: "+fft);
 
 	// then get a specific frequency's amplitude
-	freqAmplitude = fft.getFreq(freqSelected);
+	
 
 	println("freqAmplitude: "+freqAmplitude);
 
@@ -68,6 +67,12 @@ public void draw() {
 	// draw a shape or colour or something with that variable
 
 	// eat cake
+}
+
+public float listen() {
+	fft.forward(in.left);
+	freqAmplitude = fft.getFreq(freqSelected);
+	return(freqAmplitude);
 }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "room_mode_visualizer" };
