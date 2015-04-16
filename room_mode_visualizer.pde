@@ -52,6 +52,7 @@ final int _HEIGHT = 900;
 void setup() {
 	size(_WIDTH, _HEIGHT);
 	colorMode(HSB, 360, 100, 100, 100);
+	fill(0);
 	fontSize = 125;
 	showFreq = true;
 
@@ -104,12 +105,12 @@ void draw() {
 	selectBand();
 	listenBand();
 
-	if ( elapsedTime >= 2000 && elapsedTime <= 5000 ) {
+	if ( elapsedTime >= 1000 && elapsedTime <= 2000 ) {
 		ping = true;
 		visualize();
 		playFreq();
 	
-	} else if (elapsedTime > 5000 ) {
+	} else if (elapsedTime > 2000 ) {
 		ping = false;
 		prevTime = millis();
 	}
@@ -160,7 +161,9 @@ void visualize() {
 	// don't like this mapping, it goes all the way around to red at both ends
 	visualColour = int(map(freqSelected, 20, 20000, 325, 0));
 	visualAlpha = int(map(freqAmplitude, minAmp, minAmp, 70, 100));
-	fill(visualColour, visualSaturation, visualBrightness, visualAlpha);
+	fill(0);
+	strokeWeight(10);
+	stroke(visualColour, visualSaturation, visualBrightness, visualAlpha);
 
 	visualWidth = int(map(freqAmplitude, minAmp, maxAmp, 5, _WIDTH));
 	visualHeight = visualWidth;

@@ -72,6 +72,7 @@ final int _HEIGHT = 900;
 public void setup() {
 	size(_WIDTH, _HEIGHT);
 	colorMode(HSB, 360, 100, 100, 100);
+	fill(0);
 	fontSize = 125;
 	showFreq = true;
 
@@ -124,12 +125,12 @@ public void draw() {
 	selectBand();
 	listenBand();
 
-	if ( elapsedTime >= 2000 && elapsedTime <= 5000 ) {
+	if ( elapsedTime >= 1000 && elapsedTime <= 2000 ) {
 		ping = true;
 		visualize();
 		playFreq();
 	
-	} else if (elapsedTime > 5000 ) {
+	} else if (elapsedTime > 2000 ) {
 		ping = false;
 		prevTime = millis();
 	}
@@ -180,7 +181,9 @@ public void visualize() {
 	// don't like this mapping, it goes all the way around to red at both ends
 	visualColour = PApplet.parseInt(map(freqSelected, 20, 20000, 325, 0));
 	visualAlpha = PApplet.parseInt(map(freqAmplitude, minAmp, minAmp, 70, 100));
-	fill(visualColour, visualSaturation, visualBrightness, visualAlpha);
+	fill(0);
+	strokeWeight(10);
+	stroke(visualColour, visualSaturation, visualBrightness, visualAlpha);
 
 	visualWidth = PApplet.parseInt(map(freqAmplitude, minAmp, maxAmp, 5, _WIDTH));
 	visualHeight = visualWidth;
