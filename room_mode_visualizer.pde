@@ -8,6 +8,11 @@ AudioOutput out;
 FFT fft;
 Oscil wave;
 
+long currentTime;
+long prevTime;
+int elapsedTime;
+boolean ping;
+
 int bufferSize;
 int sampleRate;
 
@@ -50,6 +55,11 @@ void setup() {
 	fontSize = 125;
 	showFreq = true;
 
+	currentTime = 0;
+	prevTime = 0;
+	elapsedTime = 0;
+	ping = false;
+
 	// *** TUNE AMPLITUDE RANGE HERE ***
 	minAmp = 0.01;
 	maxAmp = 25;
@@ -88,12 +98,22 @@ void setup() {
 
 void draw() {
 	background(0);
+	currentTime = millis();
+	elapsedTime = int(currentTime - prevTime);
 
 	selectBand();
 	listenBand();
 
-	visualize();
-	playFreq();
+	if ( elapsedTime >= 2000 && elapsedTime <= 5000 ) {
+		ping = true;
+		visualize();
+		playFreq();
+	
+	} else if (elapsedTime > 5000 ) {
+		ping = false;
+		prevTime = millis();
+	}
+
 	writeFreq();
 
 	// eat cake
@@ -107,7 +127,6 @@ void selectBand() {
 	centerFreq = fft.indexToFreq(bandSelected); // get the center frequency from that band
 	freqSelected = centerFreq; // make that our selected frequency
 
-	// println("BandWidth: "+fft.getBandWidth());
 }
 
 void listenBand() {
@@ -120,10 +139,6 @@ void listenBand() {
 	if (freqList.size() > maxNumFreq) {
 		calcFreq();
 	}
-	
-	// println("bandSelected: "+bandSelected);
-	// println("freqAmplitude: "+freqAmplitude);
-
 }
 
 void calcFreq() {
@@ -143,7 +158,7 @@ void calcFreq() {
 
 void visualize() {
 	// don't like this mapping, it goes all the way around to red at both ends
-	visualColour = int(map(freqSelected, 20, 20000, 0, 325));
+	visualColour = int(map(freqSelected, 20, 20000, 325, 0));
 	visualAlpha = int(map(freqAmplitude, minAmp, minAmp, 70, 100));
 	fill(visualColour, visualSaturation, visualBrightness, visualAlpha);
 
@@ -154,12 +169,14 @@ void visualize() {
 }
 
 void playFreq() {
-	if (!mute){
+	if (!mute && ping == true){
 		wave.setAmplitude(0.5);
 		wave.setFrequency(freqSelected);
-	} else {
+		
+	} else if (mute == true || ping == false) {
 		wave.setAmplitude(0);
 	}
+
 }
 
 void writeFreq() {
