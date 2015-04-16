@@ -34,8 +34,8 @@ void setup() {
 void draw() {
 	background(0);
 
+	selectFreq();
 	listen();
-
 	visualize();
 
 	// map that value to a variable
@@ -45,10 +45,15 @@ void draw() {
 	// eat cake
 }
 
+void selectFreq() {
+	freqSelected = map(mouseY, _HEIGHT, 0, 20, 20000);
+}
+
 float listen() {
 	fft.forward(in.left);
 	freqAmplitude = fft.getFreq(freqSelected);
 	
+	println("freqSelected: "+freqSelected);
 	println("freqAmplitude: "+freqAmplitude);
 
 	return(freqAmplitude);
@@ -56,5 +61,7 @@ float listen() {
 }
 
 void visualize() {
+
+
 	ellipse(_WIDTH/2, _HEIGHT/2, visualWidth, visualHeight);
 }

@@ -26,9 +26,11 @@ FFT fft;
 
 int sampleRate;
 
-int loudnessLevel;
 float freqAmplitude;
 float freqSelected;
+
+int visualWidth;
+int visualHeight;
 
 final int _WIDTH = 800;
 final int _HEIGHT = 800;
@@ -37,12 +39,11 @@ public void setup() {
 	size(_WIDTH, _HEIGHT);
 
 	minim = new Minim(this);
-
 	sampleRate = 44100;
 
-	loudnessLevel = 0;
-	freqAmplitude = 0;
+	// what frequency are we sampling?
 	freqSelected = 3000;
+	freqAmplitude = 0;
 
 	in = minim.getLineIn(Minim.MONO, 4096, sampleRate); 
 	fft = new FFT(in.left.size(), sampleRate);
@@ -52,16 +53,10 @@ public void setup() {
 public void draw() {
 	background(0);
 
+	selectFreq();
 	listen();
-	println("fft: "+fft);
+	visualize();
 
-	// then get a specific frequency's amplitude
-	
-
-	println("freqAmplitude: "+freqAmplitude);
-
-	// loudnessLevel = map(in.right.level(),0,1,0,255);
-	
 	// map that value to a variable
 
 	// draw a shape or colour or something with that variable
@@ -69,10 +64,25 @@ public void draw() {
 	// eat cake
 }
 
+public void selectFreq() {
+	freqSelected = map(mouseY, _HEIGHT, 0, 20, 20000);
+}
+
 public float listen() {
 	fft.forward(in.left);
 	freqAmplitude = fft.getFreq(freqSelected);
+	
+	println("freqSelected: "+freqSelected);
+	println("freqAmplitude: "+freqAmplitude);
+
 	return(freqAmplitude);
+
+}
+
+public void visualize() {
+
+
+	ellipse(_WIDTH/2, _HEIGHT/2, visualWidth, visualHeight);
 }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "room_mode_visualizer" };
