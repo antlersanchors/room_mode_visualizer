@@ -14,9 +14,15 @@ int sampleRate;
 float freqAmplitude;
 float freqSelected;
 
+FloatList freqList;
+int maxNumFreq;
+
 int numBands;
 int bandSelected;
 float centerFreq;
+
+float rawFreq;
+float rawAmp;
 
 float minAmp;
 float maxAmp;
@@ -33,6 +39,8 @@ boolean mute;
 int fontSize;
 boolean showFreq;
 
+// final int _WIDTH = 1440;
+// final int _HEIGHT = 900;
 final int _WIDTH = 1440;
 final int _HEIGHT = 900;
 
@@ -50,11 +58,11 @@ void setup() {
 	visualWidth = 50;
 	visualHeight = 50;
 	visualColour = 360;
-	visualSaturation = 80;
-	visualBrightness = 40;
+	visualSaturation = 90;
+	visualBrightness = 100;
 	visualAlpha = 100;
 
-	freqSelected = 3000; // what frequency are we sampling?
+	freqSelected = 600; // what frequency are we sampling?
 	freqAmplitude = 0;
 
 	numBands = 0;
@@ -72,6 +80,9 @@ void setup() {
 
 	wave = new Oscil(freqSelected, 0.5f, Waves.SINE);
 	wave.patch(out);
+
+	freqList = new FloatList();
+	maxNumFreq = 25;
 
 }
 
@@ -96,17 +107,38 @@ void selectBand() {
 	centerFreq = fft.indexToFreq(bandSelected); // get the center frequency from that band
 	freqSelected = centerFreq; // make that our selected frequency
 
-	println("BandWidth: "+fft.getBandWidth());
+	// println("BandWidth: "+fft.getBandWidth());
 }
 
 void listenBand() {
 	fft.forward(in.left);
 
-	freqAmplitude = fft.getBand(bandSelected); // get amplitude of selected band
-	
-	println("bandSelected: "+bandSelected);
-	println("freqAmplitude: "+freqAmplitude);
+	rawAmp = fft.getBand(bandSelected); // get amplitude of selected band
 
+	freqList.append(rawAmp);
+
+	if (freqList.size() > maxNumFreq) {
+		calcFreq();
+	}
+	
+	// println("bandSelected: "+bandSelected);
+	// println("freqAmplitude: "+freqAmplitude);
+
+}
+
+void calcFreq() {
+	int numFreq = freqList.size();
+	float freqTotal = 0;
+
+	for (int i = 0; i < numFreq-1; i++) {
+		freqTotal = freqTotal + freqList.get(i);
+	}
+
+	println("freqTotal: "+freqTotal);
+	println("numFreq: "+numFreq);
+
+	freqAmplitude = freqTotal / numFreq+1;	
+	freqList.clear();
 }
 
 void visualize() {
@@ -128,7 +160,6 @@ void playFreq() {
 	} else {
 		wave.setAmplitude(0);
 	}
-
 }
 
 void writeFreq() {
