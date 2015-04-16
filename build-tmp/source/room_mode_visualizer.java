@@ -178,7 +178,7 @@ public void visualize() {
 	visualWidth = PApplet.parseInt(map(freqAmplitude, minAmp, maxAmp, 5, _HEIGHT*.9f));
 	visualHeight = visualWidth;
 
-	ellipse(_WIDTH/2, _HEIGHT/2, visualWidth, visualHeight);
+	ellipse(_WIDTH/2, _HEIGHT/2, _HEIGHT*.9f, _HEIGHT*.9f);
 }
 
 public void playFreq() {
