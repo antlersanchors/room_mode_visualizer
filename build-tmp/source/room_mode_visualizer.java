@@ -122,16 +122,8 @@ public void draw() {
 
 	selectBand();
 	listenBand();
-
-	if ( elapsedTime >= 1000 && elapsedTime <= 3000 ) {
-		ping = true;
-		visualize();
-		playFreq();
-	
-	} else if (elapsedTime > 3000 ) {
-		ping = false;
-		prevTime = millis();
-	}
+	visualize();
+	playFreq();
 
 	writeFreq();
 
@@ -190,11 +182,11 @@ public void visualize() {
 }
 
 public void playFreq() {
-	if (!mute && ping == true){
+	if (!mute){
 		wave.setAmplitude(0.5f);
 		wave.setFrequency(freqSelected);
 		
-	} else if (mute == true || ping == false) {
+	} else {
 		wave.setAmplitude(0);
 	}
 
