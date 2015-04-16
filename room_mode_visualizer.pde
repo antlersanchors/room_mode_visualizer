@@ -8,6 +8,11 @@ AudioOutput out;
 FFT fft;
 Oscil wave;
 
+long currentTime;
+long prevTime;
+int elapsedTime;
+boolean ping;
+
 int bufferSize;
 int sampleRate;
 
@@ -50,6 +55,11 @@ void setup() {
 	fontSize = 125;
 	showFreq = true;
 
+	currentTime = 0;
+	prevTime = 0;
+	elapsedTime = 0;
+	ping = false;
+
 	// *** TUNE AMPLITUDE RANGE HERE ***
 	minAmp = 0.01;
 	maxAmp = 25;
@@ -88,12 +98,22 @@ void setup() {
 
 void draw() {
 	background(0);
+	currentTime = millis();
+	elapsedTime = int(currentTime - prevTime);
 
 	selectBand();
 	listenBand();
 
-	visualize();
-	playFreq();
+	if ( elapsedTime >= 2000 && elapsedTime <= 5000 ) {
+		ping = true;
+		visualize();
+		playFreq();
+	
+	} else if (elapsedTime > 5000 ) {
+		ping = false;
+		prevTime = millis();
+	}
+
 	writeFreq();
 
 	// eat cake
@@ -154,7 +174,7 @@ void visualize() {
 }
 
 void playFreq() {
-	if (!mute){
+	if (!mute && ping){
 		wave.setAmplitude(0.5);
 		wave.setFrequency(freqSelected);
 	} else {
