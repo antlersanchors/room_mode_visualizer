@@ -29,6 +29,10 @@ int sampleRate;
 float freqAmplitude;
 float freqSelected;
 
+int numBands;
+int bandSelected;
+float centerFreq;
+
 int visualWidth;
 int visualHeight;
 int visualColour;
@@ -53,6 +57,9 @@ public void setup() {
 	freqSelected = 3000;
 	freqAmplitude = 0;
 
+	numBands = 0;
+	bandSelected = 1;
+
 	visualWidth = 50;
 	visualHeight = 50;
 	visualColour = 360;
@@ -62,7 +69,7 @@ public void setup() {
 
 	fontSize = 125;
 
-	in = minim.getLineIn(Minim.MONO, 4096, sampleRate); 
+	in = minim.getLineIn(Minim.MONO, 256, sampleRate); 
 	fft = new FFT(in.left.size(), sampleRate);
 
 }
@@ -70,14 +77,14 @@ public void setup() {
 public void draw() {
 	background(0);
 
-	selectFreq();
-	listen();
+	selectBand();
+	listenBand();
+
+	// selectFreq();
+	// listenFreq();
+
 	visualize();
 	writeFreq();
-
-	// map that value to a variable
-
-	// draw a shape or colour or something with that variable
 
 	// eat cake
 }
@@ -87,22 +94,37 @@ public void selectFreq() {
 	freqSelected = map(mouseY, _HEIGHT, 0, 20, 20000);
 }
 
-public void writeFreq() {
-	// more just for debugging
-	textSize(fontSize);
-	textAlign(CENTER);
-	fill(235);
-	text(freqSelected, _WIDTH/2, _HEIGHT/2);
+public void selectBand() {
+	// change the frequency BAND of interest based on mouseY
+	numBands = fft.specSize();
+	bandSelected = PApplet.parseInt(map(mouseY, _HEIGHT, 0, 1, numBands));
+
+	// get the center frequency from that band
+	centerFreq = fft.indexToFreq(bandSelected);
+
+	// make that our selected frequency
+	freqSelected = centerFreq;
+
+	println("BandWidth: "+fft.getBandWidth());
 }
 
-public float listen() {
+public void listenFreq() {
 	fft.forward(in.left);
+
 	freqAmplitude = fft.getFreq(freqSelected);
 	
 	println("freqSelected: "+freqSelected);
 	println("freqAmplitude: "+freqAmplitude);
 
-	return(freqAmplitude);
+}
+
+public void listenBand() {
+	fft.forward(in.left);
+
+	freqAmplitude = fft.getBand(bandSelected);
+	
+	println("bandSelected: "+bandSelected);
+	println("freqAmplitude: "+freqAmplitude);
 
 }
 
@@ -114,6 +136,14 @@ public void visualize() {
 	visualWidth = PApplet.parseInt(map(freqAmplitude, 0.001f, 45.0f, 5, _WIDTH));
 	visualHeight = visualWidth;
 	ellipse(_WIDTH/2, _HEIGHT/2, visualWidth, visualHeight);
+}
+
+public void writeFreq() {
+	// more just for debugging
+	textSize(fontSize);
+	textAlign(CENTER);
+	fill(235);
+	text(freqSelected, _WIDTH/2, _HEIGHT/2);
 }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "room_mode_visualizer" };
