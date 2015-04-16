@@ -1,5 +1,24 @@
-import ddf.minim.analysis.*;
-import ddf.minim.*;
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import ddf.minim.analysis.*; 
+import ddf.minim.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class room_mode_visualizer extends PApplet {
+
+
+
 
 Minim minim;
 AudioInput in;
@@ -14,7 +33,7 @@ int freqSelected;
 final int _WIDTH = 800;
 final int _HEIGHT = 800;
 
-void setup() {
+public void setup() {
 	size(_WIDTH, _HEIGHT);
 
 	minim = new Minim(this);
@@ -27,7 +46,7 @@ void setup() {
 
 }
 
-void draw() {
+public void draw() {
 
 	background(0);
 
@@ -49,4 +68,13 @@ void draw() {
 	// draw a shape or colour or something with that variable
 
 	// eat cake
+}
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "room_mode_visualizer" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
 }
