@@ -41,8 +41,8 @@ boolean showFreq;
 
 // final int _WIDTH = 1440;
 // final int _HEIGHT = 900;
-final int _WIDTH = 800;
-final int _HEIGHT = 800;
+final int _WIDTH = 1440;
+final int _HEIGHT = 900;
 
 void setup() {
 	size(_WIDTH, _HEIGHT);
@@ -58,11 +58,11 @@ void setup() {
 	visualWidth = 50;
 	visualHeight = 50;
 	visualColour = 360;
-	visualSaturation = 80;
-	visualBrightness = 40;
+	visualSaturation = 90;
+	visualBrightness = 100;
 	visualAlpha = 100;
 
-	freqSelected = 3000; // what frequency are we sampling?
+	freqSelected = 600; // what frequency are we sampling?
 	freqAmplitude = 0;
 
 	numBands = 0;
@@ -82,7 +82,7 @@ void setup() {
 	wave.patch(out);
 
 	freqList = new FloatList();
-	maxNumFreq = 50;
+	maxNumFreq = 25;
 
 }
 
@@ -107,7 +107,7 @@ void selectBand() {
 	centerFreq = fft.indexToFreq(bandSelected); // get the center frequency from that band
 	freqSelected = centerFreq; // make that our selected frequency
 
-	println("BandWidth: "+fft.getBandWidth());
+	// println("BandWidth: "+fft.getBandWidth());
 }
 
 void listenBand() {
@@ -121,8 +121,8 @@ void listenBand() {
 		calcFreq();
 	}
 	
-	println("bandSelected: "+bandSelected);
-	println("freqAmplitude: "+freqAmplitude);
+	// println("bandSelected: "+bandSelected);
+	// println("freqAmplitude: "+freqAmplitude);
 
 }
 
@@ -134,7 +134,10 @@ void calcFreq() {
 		freqTotal = freqTotal + freqList.get(i);
 	}
 
-	freqAmplitude = freqTotal / numFreq;	
+	println("freqTotal: "+freqTotal);
+	println("numFreq: "+numFreq);
+
+	freqAmplitude = freqTotal / numFreq+1;	
 	freqList.clear();
 }
 
@@ -142,7 +145,7 @@ void visualize() {
 	// don't like this mapping, it goes all the way around to red at both ends
 	visualColour = int(map(freqSelected, 20, 20000, 0, 325));
 	visualAlpha = int(map(freqAmplitude, minAmp, minAmp, 70, 100));
-	fill(250, visualSaturation, visualBrightness, visualAlpha);
+	fill(visualColour, visualSaturation, visualBrightness, visualAlpha);
 
 	visualWidth = int(map(freqAmplitude, minAmp, maxAmp, 5, _WIDTH));
 	visualHeight = visualWidth;
