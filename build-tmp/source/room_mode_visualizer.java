@@ -126,14 +126,11 @@ public void draw() {
 
 	if ( elapsedTime >= 2000 && elapsedTime <= 5000 ) {
 		ping = true;
-		println("ping: "+ping);
 		visualize();
 		playFreq();
 	
 	} else if (elapsedTime > 5000 ) {
 		ping = false;
-
-		println("ping: "+ping);
 		prevTime = millis();
 	}
 
@@ -150,7 +147,6 @@ public void selectBand() {
 	centerFreq = fft.indexToFreq(bandSelected); // get the center frequency from that band
 	freqSelected = centerFreq; // make that our selected frequency
 
-	// println("BandWidth: "+fft.getBandWidth());
 }
 
 public void listenBand() {
@@ -163,10 +159,6 @@ public void listenBand() {
 	if (freqList.size() > maxNumFreq) {
 		calcFreq();
 	}
-	
-	// println("bandSelected: "+bandSelected);
-	// println("freqAmplitude: "+freqAmplitude);
-
 }
 
 public void calcFreq() {
@@ -186,7 +178,7 @@ public void calcFreq() {
 
 public void visualize() {
 	// don't like this mapping, it goes all the way around to red at both ends
-	visualColour = PApplet.parseInt(map(freqSelected, 20, 20000, 0, 325));
+	visualColour = PApplet.parseInt(map(freqSelected, 20, 20000, 325, 0));
 	visualAlpha = PApplet.parseInt(map(freqAmplitude, minAmp, minAmp, 70, 100));
 	fill(visualColour, visualSaturation, visualBrightness, visualAlpha);
 
@@ -197,12 +189,14 @@ public void visualize() {
 }
 
 public void playFreq() {
-	if (!mute && ping){
+	if (!mute && ping == true){
 		wave.setAmplitude(0.5f);
 		wave.setFrequency(freqSelected);
-	} else {
+		
+	} else if (mute == true || ping == false) {
 		wave.setAmplitude(0);
 	}
+
 }
 
 public void writeFreq() {

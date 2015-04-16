@@ -127,7 +127,6 @@ void selectBand() {
 	centerFreq = fft.indexToFreq(bandSelected); // get the center frequency from that band
 	freqSelected = centerFreq; // make that our selected frequency
 
-	// println("BandWidth: "+fft.getBandWidth());
 }
 
 void listenBand() {
@@ -140,10 +139,6 @@ void listenBand() {
 	if (freqList.size() > maxNumFreq) {
 		calcFreq();
 	}
-	
-	// println("bandSelected: "+bandSelected);
-	// println("freqAmplitude: "+freqAmplitude);
-
 }
 
 void calcFreq() {
@@ -163,7 +158,7 @@ void calcFreq() {
 
 void visualize() {
 	// don't like this mapping, it goes all the way around to red at both ends
-	visualColour = int(map(freqSelected, 20, 20000, 0, 325));
+	visualColour = int(map(freqSelected, 20, 20000, 325, 0));
 	visualAlpha = int(map(freqAmplitude, minAmp, minAmp, 70, 100));
 	fill(visualColour, visualSaturation, visualBrightness, visualAlpha);
 
@@ -174,12 +169,14 @@ void visualize() {
 }
 
 void playFreq() {
-	if (!mute && ping){
+	if (!mute && ping == true){
 		wave.setAmplitude(0.5);
 		wave.setFrequency(freqSelected);
-	} else {
+		
+	} else if (mute == true || ping == false) {
 		wave.setAmplitude(0);
 	}
+
 }
 
 void writeFreq() {
