@@ -1,9 +1,12 @@
 import ddf.minim.analysis.*;
 import ddf.minim.*;
+import ddf.minim.ugens.*;
 
 Minim minim;
 AudioInput in;
+AudioOutput out;
 FFT fft;
+Oscil wave;
 
 int bufferSize;
 int sampleRate;
@@ -24,6 +27,8 @@ int visualColour;
 int visualSaturation;
 int visualBrightness;
 int visualAlpha;
+
+boolean mute;
 
 int fontSize;
 boolean showFreq;
@@ -59,8 +64,14 @@ void setup() {
 	bufferSize = 256; // the number of freq bands will be this/2
 	sampleRate = 44100;
 
+	mute = true;
+
 	in = minim.getLineIn(Minim.MONO, bufferSize, sampleRate); 
 	fft = new FFT(in.left.size(), sampleRate);
+	out = minim.getLineOut();
+
+	wave = new Oscil(freqSelected, 0.5f, Waves.SINE);
+	wave.patch(out);
 
 }
 
@@ -71,6 +82,7 @@ void draw() {
 	listenBand();
 
 	visualize();
+	playFreq();
 	writeFreq();
 
 	// eat cake
@@ -108,6 +120,16 @@ void visualize() {
 	ellipse(_WIDTH/2, _HEIGHT/2, visualWidth, visualHeight);
 }
 
+void playFreq() {
+	if (!mute){
+		wave.setAmplitude(0.5);
+		wave.setFrequency(freqSelected);
+	} else {
+		wave.setAmplitude(0);
+	}
+
+}
+
 void writeFreq() {
 	textSize(fontSize);
 	textAlign(CENTER);
@@ -120,5 +142,7 @@ void writeFreq() {
 void keyPressed() {
 	if (key == 'f') {
 		showFreq = !showFreq; // toggle our frequency display
+	} else if (key == 'm') {
+		mute = !mute; // toggle audio output
 	}
 }

@@ -5,6 +5,7 @@ import processing.opengl.*;
 
 import ddf.minim.analysis.*; 
 import ddf.minim.*; 
+import ddf.minim.ugens.*; 
 
 import java.util.HashMap; 
 import java.util.ArrayList; 
@@ -20,9 +21,12 @@ public class room_mode_visualizer extends PApplet {
 
 
 
+
 Minim minim;
 AudioInput in;
+AudioOutput out;
 FFT fft;
+Oscil wave;
 
 int bufferSize;
 int sampleRate;
@@ -43,6 +47,8 @@ int visualColour;
 int visualSaturation;
 int visualBrightness;
 int visualAlpha;
+
+boolean mute;
 
 int fontSize;
 boolean showFreq;
@@ -78,8 +84,14 @@ public void setup() {
 	bufferSize = 256; // the number of freq bands will be this/2
 	sampleRate = 44100;
 
+	mute = true;
+
 	in = minim.getLineIn(Minim.MONO, bufferSize, sampleRate); 
 	fft = new FFT(in.left.size(), sampleRate);
+	out = minim.getLineOut();
+
+	wave = new Oscil(freqSelected, 0.5f, Waves.SINE);
+	wave.patch(out);
 
 }
 
@@ -90,6 +102,7 @@ public void draw() {
 	listenBand();
 
 	visualize();
+	playFreq();
 	writeFreq();
 
 	// eat cake
@@ -127,6 +140,16 @@ public void visualize() {
 	ellipse(_WIDTH/2, _HEIGHT/2, visualWidth, visualHeight);
 }
 
+public void playFreq() {
+	if (!mute){
+		wave.setAmplitude(0.5f);
+		wave.setFrequency(freqSelected);
+	} else {
+		wave.setAmplitude(0);
+	}
+
+}
+
 public void writeFreq() {
 	textSize(fontSize);
 	textAlign(CENTER);
@@ -138,7 +161,9 @@ public void writeFreq() {
 
 public void keyPressed() {
 	if (key == 'f') {
-		showFreq = !showFreq;
+		showFreq = !showFreq; // toggle our frequency display
+	} else if (key == 'm') {
+		mute = !mute; // toggle audio output
 	}
 }
   static public void main(String[] passedArgs) {
