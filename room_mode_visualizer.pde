@@ -44,14 +44,13 @@ boolean mute;
 int fontSize;
 boolean showFreq;
 
-// final int _WIDTH = 1440;
-// final int _HEIGHT = 900;
 final int _WIDTH = 1440;
 final int _HEIGHT = 900;
 
 void setup() {
 	size(_WIDTH, _HEIGHT);
 	colorMode(HSB, 360, 100, 100, 100);
+	fill(0);
 	fontSize = 125;
 	showFreq = true;
 
@@ -103,16 +102,8 @@ void draw() {
 
 	selectBand();
 	listenBand();
-
-	if ( elapsedTime >= 2000 && elapsedTime <= 5000 ) {
-		ping = true;
-		visualize();
-		playFreq();
-	
-	} else if (elapsedTime > 5000 ) {
-		ping = false;
-		prevTime = millis();
-	}
+	visualize();
+	playFreq();
 
 	writeFreq();
 
@@ -145,35 +136,37 @@ void calcFreq() {
 	int numFreq = freqList.size();
 	float freqTotal = 0;
 
-	for (int i = 0; i < numFreq-1; i++) {
+	for (int i = 0; i <= numFreq; i++) {
 		freqTotal = freqTotal + freqList.get(i);
 	}
 
 	println("freqTotal: "+freqTotal);
 	println("numFreq: "+numFreq);
 
-	freqAmplitude = freqTotal / numFreq+1;	
+	freqAmplitude = freqTotal / numFreq;	
 	freqList.clear();
 }
 
 void visualize() {
 	// don't like this mapping, it goes all the way around to red at both ends
-	visualColour = int(map(freqSelected, 20, 20000, 325, 0));
-	visualAlpha = int(map(freqAmplitude, minAmp, minAmp, 70, 100));
-	fill(visualColour, visualSaturation, visualBrightness, visualAlpha);
+	visualColour = int(map(freqAmplitude, minAmp, maxAmp, 325, 0));
+	visualAlpha = int(map(freqAmplitude, minAmp, maxAmp, 65, 100));
+	fill(0);
+	strokeWeight(20);
+	stroke(visualColour, visualSaturation, visualBrightness, visualAlpha);
 
-	visualWidth = int(map(freqAmplitude, minAmp, maxAmp, 5, _WIDTH));
+	visualWidth = int(map(freqAmplitude, minAmp, maxAmp, 5, _HEIGHT*.9));
 	visualHeight = visualWidth;
 
-	ellipse(_WIDTH/2, _HEIGHT/2, visualWidth, visualHeight);
+	ellipse(_WIDTH/2, _HEIGHT/2, _HEIGHT*.9, _HEIGHT*.9);
 }
 
 void playFreq() {
-	if (!mute && ping == true){
+	if (!mute){
 		wave.setAmplitude(0.5);
 		wave.setFrequency(freqSelected);
 		
-	} else if (mute == true || ping == false) {
+	} else {
 		wave.setAmplitude(0);
 	}
 
