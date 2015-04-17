@@ -158,8 +158,7 @@ void visualize() {
 	visualWidth = int(map(freqAmplitude, minAmp, maxAmp, 5, _HEIGHT*.9));
 	visualHeight = visualWidth;
 
-	rectMode(CENTER);
-	rect(_WIDTH/2, _HEIGHT/2, _HEIGHT*.9, _HEIGHT*.9);
+	ellipse(_WIDTH/2, _HEIGHT/2, _HEIGHT*.9, _HEIGHT*.9);
 }
 
 void playFreq() {
