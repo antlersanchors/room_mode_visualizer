@@ -150,7 +150,7 @@ void calcFreq() {
 void visualize() {
 	// don't like this mapping, it goes all the way around to red at both ends
 	visualColour = int(map(freqAmplitude, minAmp, maxAmp, 325, 0));
-	visualAlpha = int(map(freqAmplitude, minAmp, maxAmp, 70, 100));
+	visualAlpha = int(map(freqAmplitude, minAmp, maxAmp, 65, 100));
 	fill(0);
 	strokeWeight(20);
 	stroke(visualColour, visualSaturation, visualBrightness, visualAlpha);

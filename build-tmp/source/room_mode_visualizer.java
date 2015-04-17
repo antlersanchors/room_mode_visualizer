@@ -170,7 +170,7 @@ public void calcFreq() {
 public void visualize() {
 	// don't like this mapping, it goes all the way around to red at both ends
 	visualColour = PApplet.parseInt(map(freqAmplitude, minAmp, maxAmp, 325, 0));
-	visualAlpha = PApplet.parseInt(map(freqAmplitude, minAmp, maxAmp, 70, 100));
+	visualAlpha = PApplet.parseInt(map(freqAmplitude, minAmp, maxAmp, 65, 100));
 	fill(0);
 	strokeWeight(20);
 	stroke(visualColour, visualSaturation, visualBrightness, visualAlpha);
