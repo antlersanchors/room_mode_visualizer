@@ -47,6 +47,8 @@ boolean showFreq;
 final int _WIDTH = 1440;
 final int _HEIGHT = 900;
 
+float signalThreshold = 0;
+
 void setup() {
 	size(_WIDTH, _HEIGHT);
 	colorMode(HSB, 360, 100, 100, 100);
@@ -121,9 +123,18 @@ void selectBand() {
 }
 
 void listenBand() {
+	signalThreshold = map(mouseX, 0, _WIDTH, 0, 1);
+
 	fft.forward(in.left);
 
 	rawAmp = fft.getBand(bandSelected); // get amplitude of selected band
+
+	if (rawAmp > signalThreshold) {
+
+		background(255);
+
+	}
+
 
 	freqList.append(rawAmp);
 
